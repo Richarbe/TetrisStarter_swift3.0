@@ -8,7 +8,7 @@
 
 import UIKit
 
-class JTetrisBlock: TetrisBlockModel {
+class JTetrisGrid: TetrisBlockModel {
 
     let jgrid = [
         [true, false, false],

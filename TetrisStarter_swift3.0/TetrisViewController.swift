@@ -44,7 +44,7 @@ class TetrisViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let grid = JTetrisBlock()
+        let grid = JTetrisGrid()
         let centerX = Int(UIScreen.main.bounds.size.width) / blockSize * blockSize / 2
         block = TetrisBlockView(color: UIColor.orange, grid: grid, blockSize: blockSize,
                                     startY: 100.0, boardCenterX: CGFloat(centerX))
