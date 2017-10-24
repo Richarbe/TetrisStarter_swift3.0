@@ -24,12 +24,13 @@ class TetrisBlockView: UIView {
         let width = CGFloat(blockSize * grid.blocksWide())
         let height = CGFloat(blockSize * grid.blocksHeigh())
         blockBounds = CGSize(width: width, height: height)
-        var x = boardCenterX
+        var x = (boardCenterX/CGFloat(blockSize)).rounded() * CGFloat(blockSize)
+        var y = (startY/CGFloat(blockSize)).rounded() * CGFloat(blockSize) //Partially done
         if grid.blocksWide() % 2 != 0 {  // pieces with odd number of sub-blocks will be shifted by blockSize/2 so they start on grid lines.
             x -= CGFloat(blockSize) / CGFloat(2.0)
         }
         let toTravel = CGFloat(blockSize * 12)
-        let frame = CGRect(x: x, y: startY, width: width, height: height)
+        let frame = CGRect(x: x, y: y, width: width, height: height)
         super.init(frame: frame)
         backgroundColor = UIColor.clear
         addSubBlocksToView(grid: grid, blockSize: blockSize)
@@ -59,7 +60,7 @@ class TetrisBlockView: UIView {
         if animator.state == .active {
             animator.pauseAnimation()
             UIView.animate(withDuration: 0.8, animations: { [unowned self, offset] in
-                self.center.x += CGFloat(offset)
+                self.center.x = ((self.center.x + CGFloat(offset))/30).rounded() * 30
                 }, completion: { [unowned self] (_) in
                     self.animator.startAnimation()
             })
