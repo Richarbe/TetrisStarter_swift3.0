@@ -43,19 +43,40 @@ class TetrisViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        newBlock(gridType: 2)
         
-        let grid = JTetrisGrid()
-        let centerX = Int(UIScreen.main.bounds.size.width) / blockSize * blockSize / 2
+    }
+    
+    func newBlock(gridType: Int) {
+        let num = gridType
+        var grid:TetrisBlockModel
+        switch num{
+        case 0:
+            grid = JTetrisGrid()
+        case 1:
+            grid = LTetrisGrid()
+        case 2:
+            grid = ZTetrisGrid()
+        case 3:
+            grid = STetrisGrid()
+        case 4:
+            grid = ITetrisGrid()
+        case 5:
+            grid = OTetrisGrid()
+        default:
+            print("No grid type " + String(num))
+            grid = JTetrisGrid()
+        }
+        let centerX = Int(UIScreen.main.bounds.size.width) / blockSize / 2 * blockSize
         block = TetrisBlockView(color: UIColor.orange, grid: grid, blockSize: blockSize,
-                                    startY: 100.0, boardCenterX: CGFloat(centerX))
+                                startY: 100.0, boardCenterX: CGFloat(centerX))
         
         tetrisBoard = TetrisBoardView(withFrame: UIScreen.main.bounds, blockSize: blockSize, circleRadius: 1 )
         view.addSubview(tetrisBoard)
         print("Center of block before animation: \(block.center)")
-
+        
         print("Bounds of main screen is \(UIScreen.main.bounds)")
         view.addSubview(block)
-        
     }
 
     override func didReceiveMemoryWarning() {

@@ -22,6 +22,11 @@
 		3EB94E381F82DDD500003D4A /* GridEdgeAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EB94E331F82DDD500003D4A /* GridEdgeAttributes.swift */; };
 		3EB94E391F82DDD500003D4A /* TetrisBlockEdge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EB94E341F82DDD500003D4A /* TetrisBlockEdge.swift */; };
 		3EB94E3B1F82DE0A00003D4A /* TetrisViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EB94E3A1F82DE0A00003D4A /* TetrisViewController.swift */; };
+		3FF0A8411FA01FC90023B734 /* ITetrisGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF0A8401FA01FC90023B734 /* ITetrisGrid.swift */; };
+		3FF0A8431FA020B60023B734 /* OTetrisGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF0A8421FA020B60023B734 /* OTetrisGrid.swift */; };
+		3FF0A8451FA020F70023B734 /* LTetrisGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF0A8441FA020F70023B734 /* LTetrisGrid.swift */; };
+		3FF0A8471FA022130023B734 /* TTetrisGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF0A8461FA022130023B734 /* TTetrisGrid.swift */; };
+		3FF0A8491FA023A00023B734 /* STetrisGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF0A8481FA023A00023B734 /* STetrisGrid.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +68,11 @@
 		3EB94E331F82DDD500003D4A /* GridEdgeAttributes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridEdgeAttributes.swift; sourceTree = "<group>"; };
 		3EB94E341F82DDD500003D4A /* TetrisBlockEdge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TetrisBlockEdge.swift; sourceTree = "<group>"; };
 		3EB94E3A1F82DE0A00003D4A /* TetrisViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TetrisViewController.swift; sourceTree = "<group>"; };
+		3FF0A8401FA01FC90023B734 /* ITetrisGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ITetrisGrid.swift; sourceTree = "<group>"; };
+		3FF0A8421FA020B60023B734 /* OTetrisGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OTetrisGrid.swift; sourceTree = "<group>"; };
+		3FF0A8441FA020F70023B734 /* LTetrisGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LTetrisGrid.swift; sourceTree = "<group>"; };
+		3FF0A8461FA022130023B734 /* TTetrisGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTetrisGrid.swift; sourceTree = "<group>"; };
+		3FF0A8481FA023A00023B734 /* STetrisGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STetrisGrid.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -161,6 +171,11 @@
 				3EB94E321F82DDD500003D4A /* ZTetrisGrid.swift */,
 				3EB94E331F82DDD500003D4A /* GridEdgeAttributes.swift */,
 				3EB94E341F82DDD500003D4A /* TetrisBlockEdge.swift */,
+				3FF0A8401FA01FC90023B734 /* ITetrisGrid.swift */,
+				3FF0A8421FA020B60023B734 /* OTetrisGrid.swift */,
+				3FF0A8441FA020F70023B734 /* LTetrisGrid.swift */,
+				3FF0A8461FA022130023B734 /* TTetrisGrid.swift */,
+				3FF0A8481FA023A00023B734 /* STetrisGrid.swift */,
 			);
 			name = TetrisModel;
 			sourceTree = "<group>";
@@ -300,13 +315,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				3EB94E351F82DDD500003D4A /* TetrisBlockModel.swift in Sources */,
+				3FF0A8451FA020F70023B734 /* LTetrisGrid.swift in Sources */,
+				3FF0A8491FA023A00023B734 /* STetrisGrid.swift in Sources */,
 				3EB94DFB1F82D6E600003D4A /* AppDelegate.swift in Sources */,
 				3EB94E2E1F82DDB100003D4A /* TetrisBoardView.swift in Sources */,
 				3EB94E371F82DDD500003D4A /* ZTetrisGrid.swift in Sources */,
 				3EB94E361F82DDD500003D4A /* JTetrisGrid.swift in Sources */,
 				3EB94E3B1F82DE0A00003D4A /* TetrisViewController.swift in Sources */,
+				3FF0A8431FA020B60023B734 /* OTetrisGrid.swift in Sources */,
 				3EB94E391F82DDD500003D4A /* TetrisBlockEdge.swift in Sources */,
+				3FF0A8411FA01FC90023B734 /* ITetrisGrid.swift in Sources */,
 				3EB94E381F82DDD500003D4A /* GridEdgeAttributes.swift in Sources */,
+				3FF0A8471FA022130023B734 /* TTetrisGrid.swift in Sources */,
 				3EB94E2F1F82DDB100003D4A /* TetrisBlockEdgeView.swift in Sources */,
 				3EB94E2D1F82DDB100003D4A /* TetrisBlockView.swift in Sources */,
 			);
@@ -553,6 +573,7 @@
 				3EB94E211F82D6E600003D4A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3EB94E221F82D6E600003D4A /* Build configuration list for PBXNativeTarget "TetrisStarter_swift3.0Tests" */ = {
 			isa = XCConfigurationList;
@@ -561,6 +582,7 @@
 				3EB94E241F82D6E600003D4A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3EB94E251F82D6E600003D4A /* Build configuration list for PBXNativeTarget "TetrisStarter_swift3.0UITests" */ = {
 			isa = XCConfigurationList;
@@ -569,6 +591,7 @@
 				3EB94E271F82D6E600003D4A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -107,7 +107,7 @@ class TetrisBlockModel: NSObject {
         return numColumns()
     }
     
-    func blocksHeigh() -> Int {
+    func blocksHigh() -> Int {
         return numRows()
     }
     
