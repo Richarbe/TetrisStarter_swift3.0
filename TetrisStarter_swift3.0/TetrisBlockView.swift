@@ -17,37 +17,57 @@ class TetrisBlockView: UIView {
     var angle = CGFloat(0.0)
     var blockBounds: CGSize
     
-    init(color: UIColor, grid: TetrisBlockModel, blockSize: Int, startY: CGFloat, boardCenterX: CGFloat) {
+    init(color: UIColor, grid: TetrisBlockModel, blockSize: Int, y: CGFloat, x: CGFloat) {
         blockColor = color
         blockModel = grid
         self.blockSize = blockSize
         let width = CGFloat(blockSize * grid.blocksWide())
         let height = CGFloat(blockSize * grid.blocksHigh())
         blockBounds = CGSize(width: width, height: height)
-        var x = (boardCenterX/CGFloat(blockSize)).rounded() * CGFloat(blockSize)
-        var y = (startY/CGFloat(blockSize)).rounded() * CGFloat(blockSize) //Partially done
-        var testwide = grid.blocksWide()
-        var testhigh = grid.blocksHigh()
-        if grid.blocksWide() % 2 == 1 {  // pieces with odd number of sub-blocks will be shifted by blockSize/2 so they start on grid lines.
-            x -= CGFloat(blockSize) / CGFloat(2.0)
-        }
-        if grid.blocksHigh() % 2 == 1 {
-            y -= CGFloat(blockSize) / CGFloat(2.0)
-        }
-        
         let toTravel = CGFloat(blockSize * 12)
         let frame = CGRect(x: x, y: y, width: width, height: height)
         super.init(frame: frame)
         backgroundColor = UIColor.clear
+        snapToGrid(SnapToX: true, SnapToY: true)
         addSubBlocksToView(grid: grid, blockSize: blockSize)
         animator = UIViewPropertyAnimator(duration: 5.0, curve: .linear) { [unowned self] in
             self.center.y += toTravel
+        }
+        animator.addCompletion { position in
+            switch position {
+            case .end:
+                //print("completion handler called at the end of the animation")
+                NotificationCenter.default.post(name: Constants.BLOCK_LAND_NOTIFY, object: nil)
+            case .current:
+                print("completion handler called mid animation")
+            case .start:
+                print("completion handler called at the start of the animation")
+            }
         }
     }
 
     func startDescent() {
         animator.startAnimation()
-        blockModel.printEdges()
+        //blockModel.printEdges()
+    }
+    
+    func moveToPosition(x: Int, y: Int) {
+        self.center.x = CGFloat(x)
+        self.center.y = CGFloat(y)
+        snapToGrid(SnapToX: true, SnapToY: true)
+    }
+    
+    func snapToGrid(SnapToX: Bool, SnapToY: Bool){
+        var x = (self.center.x/CGFloat(blockSize)).rounded() * CGFloat(blockSize)
+        var y = (self.center.y/CGFloat(blockSize)).rounded() * CGFloat(blockSize)
+        if blockModel.blocksWide() % 2 != 0 {  // pieces with odd number of sub-blocks will be shifted by blockSize/2 so they start on grid lines.
+            x -= CGFloat(blockSize) / CGFloat(2.0)
+        }
+        if blockModel.blocksHigh() % 2 != 0 {
+            y -= CGFloat(blockSize) / CGFloat(2.0)
+        }
+        self.center.x = x
+        self.center.y = y
     }
     
     func pauseAnimation() {
@@ -90,10 +110,10 @@ class TetrisBlockView: UIView {
     func rotateBlock(rotationAngle: CGFloat) {
         animator.pauseAnimation()
         
-        let aPoint = CGPoint(x: 0.0, y: 0.0)  // upper-left
-        let aPointInSuperView = superview!.convert(aPoint, from: self)
-        print("Choosing reference point \(aPoint) to calculate the x-offset after the rotation.")
-        print("The above reference point translated into the superview (board) is \(aPointInSuperView)")
+        //let aPoint = CGPoint(x: 0.0, y: 0.0)  // upper-left
+        //let aPointInSuperView = superview!.convert(aPoint, from: self)
+        //print("Choosing reference point \(aPoint) to calculate the x-offset after the rotation.")
+        //print("The above reference point translated into the superview (board) is \(aPointInSuperView)")
 
         // Set up a new animation for the purpose of rotating the block.
         angle += rotationAngle
@@ -104,18 +124,21 @@ class TetrisBlockView: UIView {
         // Once the rotation is complete, we will have to make sure that the block is aligned on the edge
         // of some vertical gridline. The gridlines are blockSize apart and logically divide the board.
         rotation.addCompletion { [unowned self] (_) in
-            let aPointTranslated = self.superview!.convert(aPoint, from: self)
-            print("After rotation, we translate \(aPointInSuperView) in the superview to get \(aPointTranslated).")
-            let diffX = Int(abs(aPointInSuperView.x - aPointTranslated.x)) % self.blockSize
-            print("We are \(diffX) points off from a vertical gridline.")
+            //let aPointTranslated = self.superview!.convert(aPoint, from: self)
+            //print("After rotation, we translate \(aPointInSuperView) in the superview to get \(aPointTranslated).")
+            //let diffX = Int(abs(aPointInSuperView.x - aPointTranslated.x)) % self.blockSize
+            //print("We are \(diffX) points off from a vertical gridline.")
             UIView.animate(withDuration: 0.5, animations: {
-                self.center = CGPoint(x: self.center.x - CGFloat(diffX), y: self.center.y)
+                var x = (self.center.x/CGFloat(self.blockSize)).rounded() * CGFloat(self.blockSize)
+                if self.blockModel.blocksWide() % 2 != 0 {  // pieces with odd number of sub-blocks will be shifted by blockSize/2 so they start on grid lines.
+                    x -= CGFloat(self.blockSize) / CGFloat(2.0)
+                }
+                self.center.x = x//CGPoint(x: self.center.x - CGFloat(diffX), y: self.center.y)
             })
             
             self.animator.startAnimation()
         }
         rotation.startAnimation()
-
     }
     
     func rotateCounterClockwise() {
@@ -123,8 +146,9 @@ class TetrisBlockView: UIView {
             return
         }
         animator.pauseAnimation()
-        rotateBlock(rotationAngle: -CGFloat.pi / 2.0)
         blockModel.didRotateCounterClockwise()
+        rotateBlock(rotationAngle: -CGFloat.pi / 2.0)
+        
         printEdgeValues(edge: Edges.bottom)
         animator.startAnimation()
     }
@@ -134,8 +158,9 @@ class TetrisBlockView: UIView {
             return
         }
         animator.pauseAnimation()
-        rotateBlock(rotationAngle: CGFloat.pi / 2.0)
         blockModel.didRotateClockwise()
+        rotateBlock(rotationAngle: CGFloat.pi / 2.0)
+        
         printEdgeValues(edge: Edges.bottom)
     }
     

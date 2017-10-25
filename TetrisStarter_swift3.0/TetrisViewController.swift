@@ -13,6 +13,7 @@ class TetrisViewController: UIViewController {
     let blockSize = 30
     var tetrisBoard: TetrisBoardView!
     var block: TetrisBlockView!
+    var holdBlock: TetrisBlockView!
     var inMotion = false
     var paused = false
 
@@ -20,7 +21,7 @@ class TetrisViewController: UIViewController {
     @IBAction func didTapTheView(_ sender: UITapGestureRecognizer) {
         if !inMotion  {
             inMotion = true
-            block.startDescent()
+            newBlock(gridType: Int(arc4random_uniform(6)))
             return
         }
 
@@ -43,8 +44,17 @@ class TetrisViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        NotificationCenter.default.addObserver(self, selector: #selector(TetrisViewController.onBlockLand), name: Constants.BLOCK_LAND_NOTIFY, object: nil)
+        tetrisBoard = TetrisBoardView(withFrame: UIScreen.main.bounds, blockSize: blockSize, circleRadius: 1 )
+        view.addSubview(tetrisBoard)
         newBlock(gridType: 2)
         
+    }
+    
+    func onBlockLand() {
+        print("View Controller Notified")
+        newBlock(gridType: Int(arc4random_uniform(6)))
+        block.startDescent()
     }
     
     func newBlock(gridType: Int) {
@@ -68,15 +78,20 @@ class TetrisViewController: UIViewController {
             grid = JTetrisGrid()
         }
         let centerX = Int(UIScreen.main.bounds.size.width) / blockSize / 2 * blockSize
-        block = TetrisBlockView(color: UIColor.orange, grid: grid, blockSize: blockSize,
-                                startY: 100.0, boardCenterX: CGFloat(centerX))
+        if holdBlock != nil {
+            block = holdBlock
+            block.moveToPosition(x: centerX, y: 100)
+            
+            block.startDescent()
+        }
+        holdBlock = TetrisBlockView(color: UIColor.orange, grid: grid, blockSize: blockSize,
+                                y: 50.0, x: CGFloat(centerX-150))
         
-        tetrisBoard = TetrisBoardView(withFrame: UIScreen.main.bounds, blockSize: blockSize, circleRadius: 1 )
-        view.addSubview(tetrisBoard)
-        print("Center of block before animation: \(block.center)")
+
+        //print("Center of block before animation: \(block.center)")
         
-        print("Bounds of main screen is \(UIScreen.main.bounds)")
-        view.addSubview(block)
+        //print("Bounds of main screen is \(UIScreen.main.bounds)")
+        view.addSubview(holdBlock)
     }
 
     override func didReceiveMemoryWarning() {

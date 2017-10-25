@@ -19,7 +19,7 @@ class TetrisBlockModel: NSObject {
     private var blockEdgeAttributes: GridEdgeAttributes!
     private var blockEdges = [TetrisBlockEdge]()
     private let edges: [Edges] = [.bottom, .left, .top, .right]  // Any order will work
-    private let bottomEdgeIdx = 0
+    private var bottomEdgeIdx = 0
     private var currentDirection: OffsetTraversal
 
     init(tetrisGrid: [[Bool]]) {
@@ -45,33 +45,34 @@ class TetrisBlockModel: NSObject {
     func didRotateClockwise() {
         let lastIdx = blockEdges.count - 1
 
-        print("begin printing edges before rotating them cw")
-        printEdges()
-        print("end printing edges before rotating them cw")
+        //print("begin printing edges before rotating them cw")
+        //printEdges()
+        //print("end printing edges before rotating them cw")
 
         blockEdges = [blockEdges[lastIdx]] + blockEdges[0 ... lastIdx - 1]
         blockEdges[0].reverseOffsets()
         blockEdges[2].reverseOffsets()
-        
-        print("begin printing edges after rotating them cw")
-        printEdges()
-        print("end printing edges after rotating them cw")
+        bottomEdgeIdx = bottomEdgeIdx - 1 % 4
+        //print("begin printing edges after rotating them cw")
+       // printEdges()
+        //print("end printing edges after rotating them cw")
         
 
     }
     
     func didRotateCounterClockwise() {
         let lastIdx = blockEdges.count - 1
-        print("begin printing edges before rotating them ccw")
-        printEdges()
-        print("end printing edges before rotating them ccw")
-        print()
+        //print("begin printing edges before rotating them ccw")
+        //printEdges()
+        //print("end printing edges before rotating them ccw")
+        //print()
         blockEdges = blockEdges[1 ... lastIdx] + [blockEdges[0]]
         blockEdges[1].reverseOffsets()
         blockEdges[3].reverseOffsets()
-        print("begin printing edges after rotating them ccw")
-        printEdges()
-        print("end printing edges after rotating them ccw")
+        bottomEdgeIdx = bottomEdgeIdx + 1 % 4
+        //print("begin printing edges after rotating them ccw")
+        //printEdges()
+        //print("end printing edges after rotating them ccw")
     }
     
     func edgeAttributes(edge: Edges) -> TetrisBlockEdge {
@@ -104,11 +105,20 @@ class TetrisBlockModel: NSObject {
     }
     
     func blocksWide() -> Int {
-        return numColumns()
+        if bottomEdgeIdx % 2 == 0{
+            return numColumns()
+        }else{
+            return numRows()
+        }
+        
     }
     
     func blocksHigh() -> Int {
-        return numRows()
+        if bottomEdgeIdx % 2 == 0{
+            return numRows()
+        }else{
+            return numColumns()
+        }
     }
     
     func smallestVisibleGrid() -> [[Bool]]? {
