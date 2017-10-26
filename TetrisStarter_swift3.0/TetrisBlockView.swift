@@ -85,7 +85,7 @@ class TetrisBlockView: UIView {
     func moveSideWays(offset: Int) {
         if animator.state == .active {
             animator.pauseAnimation()
-            UIView.animate(withDuration: 0.8, animations: { [unowned self, offset] in
+            UIView.animate(withDuration: 0.3, animations: { [unowned self, offset] in
                 self.center.x = self.center.x + CGFloat(offset)
                 }, completion: { [unowned self] (_) in
                     self.animator.startAnimation()
@@ -117,28 +117,19 @@ class TetrisBlockView: UIView {
 
         // Set up a new animation for the purpose of rotating the block.
         angle += rotationAngle
-        let rotation = UIViewPropertyAnimator(duration: 1.0, curve: .easeInOut) { [unowned self, angle] in
+        let rotation = UIViewPropertyAnimator(duration: 0.3, curve: .easeInOut) { [unowned self, angle] in
             self.transform = CGAffineTransform(rotationAngle: angle)
+            var x = (self.center.x/CGFloat(self.blockSize)).rounded() * CGFloat(self.blockSize)
+            if self.blockModel.blocksWide() % 2 != 0 {  // pieces with odd number of sub-blocks will be shifted by blockSize/2 so they start on grid lines.
+                x -= CGFloat(self.blockSize) / CGFloat(2.0)
+            }
+            self.center.x = x//CGPoint(x: self.center.x - CGFloat(diffX), y: self.center.y)
         }
         
         // Once the rotation is complete, we will have to make sure that the block is aligned on the edge
         // of some vertical gridline. The gridlines are blockSize apart and logically divide the board.
-        rotation.addCompletion { [unowned self] (_) in
-            //let aPointTranslated = self.superview!.convert(aPoint, from: self)
-            //print("After rotation, we translate \(aPointInSuperView) in the superview to get \(aPointTranslated).")
-            //let diffX = Int(abs(aPointInSuperView.x - aPointTranslated.x)) % self.blockSize
-            //print("We are \(diffX) points off from a vertical gridline.")
-            UIView.animate(withDuration: 0.5, animations: {
-                var x = (self.center.x/CGFloat(self.blockSize)).rounded() * CGFloat(self.blockSize)
-                if self.blockModel.blocksWide() % 2 != 0 {  // pieces with odd number of sub-blocks will be shifted by blockSize/2 so they start on grid lines.
-                    x -= CGFloat(self.blockSize) / CGFloat(2.0)
-                }
-                self.center.x = x//CGPoint(x: self.center.x - CGFloat(diffX), y: self.center.y)
-            })
-            
-            self.animator.startAnimation()
-        }
         rotation.startAnimation()
+        animator.startAnimation()
     }
     
     func rotateCounterClockwise() {

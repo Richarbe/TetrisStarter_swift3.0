@@ -10,6 +10,13 @@ import UIKit
 
 class TetrisViewController: UIViewController {
     
+    var boardFrame: CGRect!
+    let leftMargin = 50
+    let rightMargin = 50
+    let topMargin = 50
+    let bottomMargin = 50
+    let gridWidth = 12
+    let gridHeight = 20
     let blockSize = 30
     var tetrisBoard: TetrisBoardView!
     var block: TetrisBlockView!
@@ -45,7 +52,13 @@ class TetrisViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(TetrisViewController.onBlockLand), name: Constants.BLOCK_LAND_NOTIFY, object: nil)
-        tetrisBoard = TetrisBoardView(withFrame: UIScreen.main.bounds, blockSize: blockSize, circleRadius: 1 )
+        let boardWidth = Int(UIScreen.main.bounds.maxX) - rightMargin - leftMargin
+        let boardHeight = Int(UIScreen.main.bounds.maxY) - bottomMargin - topMargin
+        boardFrame = CGRect(x: boardWidth / 2 + leftMargin,
+                            y: boardHeight / 2 + topMargin,
+                            width: boardWidth,
+                            height: boardHeight)
+        tetrisBoard = TetrisBoardView(withFrame: boardFrame, numRows: gridHeight, numCols: gridWidth, circleRadius: 1 )
         view.addSubview(tetrisBoard)
         newBlock(gridType: 2)
         
