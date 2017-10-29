@@ -26,6 +26,7 @@
                             <outletCollection property="gestureRecognizers" destination="YmU-8E-khB" appends="YES" id="dWa-fy-T2g"/>
                             <outletCollection property="gestureRecognizers" destination="6Pi-br-7Vd" appends="YES" id="hW9-qo-3hN"/>
                             <outletCollection property="gestureRecognizers" destination="Hcm-Qw-cBn" appends="YES" id="fbB-yi-43Z"/>
+                            <outletCollection property="gestureRecognizers" destination="q5l-td-QV3" appends="YES" id="jYz-AJ-Ito"/>
                         </connections>
                     </view>
                 </viewController>
@@ -45,6 +46,7 @@
                         <action selector="didTapTheView:" destination="BYZ-38-t0r" id="uaj-fj-cpd"/>
                     </connections>
                 </tapGestureRecognizer>
+                <swipeGestureRecognizer direction="down" id="q5l-td-QV3"/>
             </objects>
             <point key="canvasLocation" x="65" y="141"/>
         </scene>

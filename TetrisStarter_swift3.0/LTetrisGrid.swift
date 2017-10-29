@@ -15,9 +15,9 @@ class LTetrisGrid: TetrisBlockModel {
         [true, true, true]
     ]
     
-    init() {
-        super.init(tetrisGrid: lgrid)
+    init(board: TetrisBoardModel) {
+        super.init(tetrisGrid: lgrid, tetrisBoardModel: board)
+        self.setColor(color: UIColor.red)
     }
-    
 }
 

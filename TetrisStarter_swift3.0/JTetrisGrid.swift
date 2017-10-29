@@ -15,8 +15,9 @@ class JTetrisGrid: TetrisBlockModel {
         [true, true, true]
     ]
     
-    init() {
-        super.init(tetrisGrid: jgrid)
+    init(board: TetrisBoardModel) {
+        super.init(tetrisGrid: jgrid, tetrisBoardModel: board)
+        self.setColor(color: UIColor.orange)
     }
 
 }

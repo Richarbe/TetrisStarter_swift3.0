@@ -15,8 +15,9 @@ class OTetrisGrid: TetrisBlockModel {
         [true, true]
     ]
     
-    init() {
-        super.init(tetrisGrid: ogrid)
+    init(board: TetrisBoardModel) {
+        super.init(tetrisGrid: ogrid, tetrisBoardModel: board)
+        self.setColor(color: UIColor.blue)
     }
     
 }

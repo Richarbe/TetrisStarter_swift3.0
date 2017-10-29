@@ -21,9 +21,12 @@ class TetrisBlockModel: NSObject {
     private let edges: [Edges] = [.bottom, .left, .top, .right]  // Any order will work
     private var bottomEdgeIdx = 0
     private var currentDirection: OffsetTraversal
+    private var board: TetrisBoardModel
+    private var color: UIColor = UIColor.orange
 
-    init(tetrisGrid: [[Bool]]) {
+    init(tetrisGrid: [[Bool]], tetrisBoardModel: TetrisBoardModel) {
         grid = tetrisGrid
+        board = tetrisBoardModel
         currentDirection = .forward
         super.init()
         blockEdgeAttributes = GridEdgeAttributes(grid: smallestVisibleGrid()!)
@@ -36,7 +39,7 @@ class TetrisBlockModel: NSObject {
     func printEdges() {
         for edge in edges {
             let edgeAttr = edgeAttributes(edge: edge)
-
+            
             print(edgeAttr.edgeName, edgeAttr.direction)
             print(edgeAttr.edgeOffsets())
         }
@@ -44,7 +47,7 @@ class TetrisBlockModel: NSObject {
     
     func didRotateClockwise() {
         let lastIdx = blockEdges.count - 1
-
+        
         //print("begin printing edges before rotating them cw")
         //printEdges()
         //print("end printing edges before rotating them cw")
@@ -89,6 +92,18 @@ class TetrisBlockModel: NSObject {
         }
         blockEdges[idx].direction = currentDirection
         return blockEdges[idx]
+    }
+    
+    func getColor() -> UIColor {
+        return color
+    }
+    
+    func setColor(color: UIColor){
+        self.color = color
+    }
+    
+    func getBoard() -> TetrisBoardModel {
+        return board
     }
     
     func hasBlockAt(row: Int, column: Int) -> Bool {

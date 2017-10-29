@@ -11,14 +11,14 @@ import UIKit
 class TetrisViewController: UIViewController {
     
     var boardFrame: CGRect!
-    let leftMargin = 50
-    let rightMargin = 50
-    let topMargin = 50
-    let bottomMargin = 50
+    let leftMargin = 20
+    let rightMargin = 20
+    let topMargin = 20
+    let bottomMargin = 20
     let gridWidth = 12
     let gridHeight = 20
-    let blockSize = 30
-    var tetrisBoard: TetrisBoardView!
+    var tetrisBoardView: TetrisBoardView!
+    var tetrisBoard: TetrisBoardModel!
     var block: TetrisBlockView!
     var holdBlock: TetrisBlockView!
     var inMotion = false
@@ -32,9 +32,9 @@ class TetrisViewController: UIViewController {
             return
         }
 
-        let location = sender.location(in: tetrisBoard)
+        let location = sender.location(in: tetrisBoardView)
         print(location)
-        if location.x < tetrisBoard.bounds.width / CGFloat(2.0) {
+        if location.x < tetrisBoardView.bounds.width / CGFloat(2.0) {
             block.rotateCounterClockwise()
         } else {
             block.rotateClockWise()
@@ -42,10 +42,14 @@ class TetrisViewController: UIViewController {
      }
     
     @IBAction func didSwipeView(_ sender: UISwipeGestureRecognizer) {
-        if sender.direction == .left {
-            block.moveLeft()
-        } else {
-            block.moveRight()
+        if block != nil{
+            if sender.direction == .left {
+                block.moveLeft()
+            } else if sender.direction == .right {
+                block.moveRight()
+            } else if sender.direction == .down {
+                //TODO send block down
+            }
         }
     }
     
@@ -54,12 +58,14 @@ class TetrisViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(TetrisViewController.onBlockLand), name: Constants.BLOCK_LAND_NOTIFY, object: nil)
         let boardWidth = Int(UIScreen.main.bounds.maxX) - rightMargin - leftMargin
         let boardHeight = Int(UIScreen.main.bounds.maxY) - bottomMargin - topMargin
-        boardFrame = CGRect(x: boardWidth / 2 + leftMargin,
-                            y: boardHeight / 2 + topMargin,
+        boardFrame = CGRect(x: leftMargin,
+                            y: topMargin,
                             width: boardWidth,
                             height: boardHeight)
-        tetrisBoard = TetrisBoardView(withFrame: boardFrame, numRows: gridHeight, numCols: gridWidth, circleRadius: 1 )
-        view.addSubview(tetrisBoard)
+        
+        tetrisBoard = TetrisBoardModel(frame: boardFrame, numRows: gridHeight, numColumns: gridWidth)
+        tetrisBoardView = TetrisBoardView(boardModel: tetrisBoard)
+        view.addSubview(tetrisBoardView)
         newBlock(gridType: 2)
         
     }
@@ -75,30 +81,29 @@ class TetrisViewController: UIViewController {
         var grid:TetrisBlockModel
         switch num{
         case 0:
-            grid = JTetrisGrid()
+            grid = JTetrisGrid(board: tetrisBoard)
         case 1:
-            grid = LTetrisGrid()
+            grid = LTetrisGrid(board: tetrisBoard)
         case 2:
-            grid = ZTetrisGrid()
+            grid = ZTetrisGrid(board: tetrisBoard)
         case 3:
-            grid = STetrisGrid()
+            grid = STetrisGrid(board: tetrisBoard)
         case 4:
-            grid = ITetrisGrid()
+            grid = ITetrisGrid(board: tetrisBoard)
         case 5:
-            grid = OTetrisGrid()
+            grid = OTetrisGrid(board: tetrisBoard)
         default:
             print("No grid type " + String(num))
-            grid = JTetrisGrid()
+            grid = JTetrisGrid(board: tetrisBoard)
         }
-        let centerX = Int(UIScreen.main.bounds.size.width) / blockSize / 2 * blockSize
+        let centerX = Int(UIScreen.main.bounds.size.width) / 2
         if holdBlock != nil {
             block = holdBlock
             block.moveToPosition(x: centerX, y: 100)
             
             block.startDescent()
         }
-        holdBlock = TetrisBlockView(color: UIColor.orange, grid: grid, blockSize: blockSize,
-                                y: 50.0, x: CGFloat(centerX-150))
+        holdBlock = TetrisBlockView(grid: grid, y: 50.0, x: CGFloat(centerX-150))
         
 
         //print("Center of block before animation: \(block.center)")

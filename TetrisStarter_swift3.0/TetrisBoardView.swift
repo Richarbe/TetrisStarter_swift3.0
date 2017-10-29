@@ -14,15 +14,13 @@ class TetrisBoardView: UIView {
     let markerRadius: CGFloat
     var numRows: Int
     var numColumns: Int
-    var containingRect: CGRect!
     
-    init(withFrame frame: CGRect, numRows: Int, numCols: Int, circleRadius: Int) {
-        containingRect = frame
-        gapBetweenCenters = CGFloat(frame.width / CGFloat(numCols))
-        markerRadius = CGFloat(circleRadius)
-        self.numRows = numRows
-        self.numColumns = numCols
-        super.init(frame: frame)
+    init(boardModel: TetrisBoardModel) {
+        gapBetweenCenters = CGFloat(boardModel.frame.width / CGFloat(boardModel.numColumns)).rounded()
+        markerRadius = CGFloat(1.0)
+        self.numRows = boardModel.numRows
+        self.numColumns = boardModel.numColumns
+        super.init(frame: boardModel.frame)
         backgroundColor = UIColor.clear
     }
 
@@ -30,13 +28,13 @@ class TetrisBoardView: UIView {
     // Only override draw() if you perform custom drawing.
     // An empty implementation adversely affects performance during animation.
     override func draw(_ rect: CGRect) {
-        print("in TetrisBoard: rect is \(containingRect)")
-        super.draw(containingRect)
+        print("in TetrisBoard: rect is \(rect)")
+        super.draw(rect)
         var circles = [UIBezierPath]()
         for row in 0 ..< numRows+1 {
-            let y = gapBetweenCenters * CGFloat(row) + frame.minY
+            let y = gapBetweenCenters * CGFloat(row)
             for column in 0 ..< numColumns+1 {
-                let x = gapBetweenCenters * CGFloat(column) + frame.minX
+                let x = gapBetweenCenters * CGFloat(column)
                 let center = CGPoint(x: x, y: y)
                 let marker = UIBezierPath(arcCenter: center, radius: markerRadius,
                                           startAngle: 0.0, endAngle: CGFloat(2.0 * Double.pi), clockwise: false)

@@ -15,8 +15,9 @@ class ZTetrisGrid: TetrisBlockModel {
         [false, true, true]
     ]
     
-    init() {
-        super.init(tetrisGrid: zgrid)
+    init(board: TetrisBoardModel) {
+        super.init(tetrisGrid: zgrid, tetrisBoardModel: board)
+        self.setColor(color: UIColor.cyan)
     }
 
 }

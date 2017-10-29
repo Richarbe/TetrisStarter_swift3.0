@@ -15,9 +15,9 @@ class STetrisGrid: TetrisBlockModel {
         [true, true, false]
     ]
     
-    init() {
-        super.init(tetrisGrid: sgrid)
+    init(board: TetrisBoardModel) {
+        super.init(tetrisGrid: sgrid, tetrisBoardModel: board)
+        self.setColor(color: UIColor.purple)
     }
-    
 }
 

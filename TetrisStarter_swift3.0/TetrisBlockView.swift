@@ -16,11 +16,17 @@ class TetrisBlockView: UIView {
     var animator: UIViewPropertyAnimator!
     var angle = CGFloat(0.0)
     var blockBounds: CGSize
+    var boardModel: TetrisBoardModel
+    var xOffset: CGFloat
+    var yOffset: CGFloat
     
-    init(color: UIColor, grid: TetrisBlockModel, blockSize: Int, y: CGFloat, x: CGFloat) {
-        blockColor = color
+    init(grid: TetrisBlockModel, y: CGFloat, x: CGFloat) {
+        blockColor = grid.getColor()
         blockModel = grid
-        self.blockSize = blockSize
+        boardModel = grid.getBoard()
+        xOffset = grid.getBoard().frame.minX
+        yOffset = grid.getBoard().frame.minY
+        self.blockSize = Int(grid.getBoard().getBlockSize())
         let width = CGFloat(blockSize * grid.blocksWide())
         let height = CGFloat(blockSize * grid.blocksHigh())
         blockBounds = CGSize(width: width, height: height)
@@ -58,8 +64,8 @@ class TetrisBlockView: UIView {
     }
     
     func snapToGrid(SnapToX: Bool, SnapToY: Bool){
-        var x = (self.center.x/CGFloat(blockSize)).rounded() * CGFloat(blockSize)
-        var y = (self.center.y/CGFloat(blockSize)).rounded() * CGFloat(blockSize)
+        var x = (((self.center.x-self.xOffset)/CGFloat(blockSize)).rounded() * CGFloat(blockSize))+xOffset
+        var y = (((self.center.y-self.yOffset)/CGFloat(blockSize)).rounded() * CGFloat(blockSize))+yOffset
         if blockModel.blocksWide() % 2 != 0 {  // pieces with odd number of sub-blocks will be shifted by blockSize/2 so they start on grid lines.
             x -= CGFloat(blockSize) / CGFloat(2.0)
         }
@@ -119,7 +125,7 @@ class TetrisBlockView: UIView {
         angle += rotationAngle
         let rotation = UIViewPropertyAnimator(duration: 0.3, curve: .easeInOut) { [unowned self, angle] in
             self.transform = CGAffineTransform(rotationAngle: angle)
-            var x = (self.center.x/CGFloat(self.blockSize)).rounded() * CGFloat(self.blockSize)
+            var x = (((self.center.x-self.xOffset)/CGFloat(self.blockSize)).rounded() * CGFloat(self.blockSize)) + self.xOffset
             if self.blockModel.blocksWide() % 2 != 0 {  // pieces with odd number of sub-blocks will be shifted by blockSize/2 so they start on grid lines.
                 x -= CGFloat(self.blockSize) / CGFloat(2.0)
             }
