@@ -36,6 +36,24 @@ class TetrisBlockModel: NSObject {
         
     }
     
+    func valueAt(row: Int,col: Int) -> Bool{
+        let maxRow = self.blocksHigh()
+        let maxCol = self.blocksWide()
+        switch bottomEdgeIdx{
+        case 0:
+            return grid[row][col]
+        case 1: //one counterclockwise rotation, requires transpose and flip on y axis
+            return grid[maxCol-col][row]
+        case 2: //two counterclockwise rotations, requires flip on x and y axis.
+            return grid[maxRow-row][maxCol-col]
+        case 3: // three counterclockwise roations, requires transpose and flip on x axis
+            return grid[col][maxRow-row]
+        default:
+            print("bottomEdgeIdx out of bounds, value is \(bottomEdgeIdx)")
+            return false
+        }
+    }
+    
     func printEdges() {
         for edge in edges {
             let edgeAttr = edgeAttributes(edge: edge)
@@ -55,7 +73,9 @@ class TetrisBlockModel: NSObject {
         blockEdges = [blockEdges[lastIdx]] + blockEdges[0 ... lastIdx - 1]
         blockEdges[0].reverseOffsets()
         blockEdges[2].reverseOffsets()
-        bottomEdgeIdx = bottomEdgeIdx - 1 % 4
+        bottomEdgeIdx = (bottomEdgeIdx - 1) % 4
+        
+        print("CWbottomEdgeIdx \(bottomEdgeIdx)")
         //print("begin printing edges after rotating them cw")
        // printEdges()
         //print("end printing edges after rotating them cw")
@@ -72,7 +92,8 @@ class TetrisBlockModel: NSObject {
         blockEdges = blockEdges[1 ... lastIdx] + [blockEdges[0]]
         blockEdges[1].reverseOffsets()
         blockEdges[3].reverseOffsets()
-        bottomEdgeIdx = bottomEdgeIdx + 1 % 4
+        bottomEdgeIdx = mod((bottomEdgeIdx + 1), 4)
+        print("CCWbottomEdgeIdx \(bottomEdgeIdx)")
         //print("begin printing edges after rotating them ccw")
         //printEdges()
         //print("end printing edges after rotating them ccw")

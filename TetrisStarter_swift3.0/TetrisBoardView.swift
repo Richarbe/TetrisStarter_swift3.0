@@ -16,7 +16,7 @@ class TetrisBoardView: UIView {
     var numColumns: Int
     
     init(boardModel: TetrisBoardModel) {
-        gapBetweenCenters = CGFloat(boardModel.frame.width / CGFloat(boardModel.numColumns)).rounded()
+        gapBetweenCenters = boardModel.getBlockSize()
         markerRadius = CGFloat(1.0)
         self.numRows = boardModel.numRows
         self.numColumns = boardModel.numColumns

@@ -109,7 +109,7 @@ class TetrisViewController: UIViewController {
         //print("Center of block before animation: \(block.center)")
         
         //print("Bounds of main screen is \(UIScreen.main.bounds)")
-        view.addSubview(holdBlock)
+        tetrisBoardView.addSubview(holdBlock)
     }
 
     override func didReceiveMemoryWarning() {
