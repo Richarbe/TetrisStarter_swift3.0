@@ -37,8 +37,8 @@ class TetrisBlockModel: NSObject {
     }
     
     func valueAt(row: Int,col: Int) -> Bool{
-        let maxRow = self.blocksHigh()
-        let maxCol = self.blocksWide()
+        let maxRow = self.blocksHigh() - 1
+        let maxCol = self.blocksWide() - 1
         switch bottomEdgeIdx{
         case 0:
             return grid[row][col]
@@ -73,7 +73,11 @@ class TetrisBlockModel: NSObject {
         blockEdges = [blockEdges[lastIdx]] + blockEdges[0 ... lastIdx - 1]
         blockEdges[0].reverseOffsets()
         blockEdges[2].reverseOffsets()
-        bottomEdgeIdx = (bottomEdgeIdx - 1) % 4
+        if bottomEdgeIdx == 0 { //swift lacks proper modulus, so I have to do it myself.
+            bottomEdgeIdx = 3
+        }else{
+            bottomEdgeIdx = bottomEdgeIdx - 1
+        }
         
         print("CWbottomEdgeIdx \(bottomEdgeIdx)")
         //print("begin printing edges after rotating them cw")
@@ -92,7 +96,11 @@ class TetrisBlockModel: NSObject {
         blockEdges = blockEdges[1 ... lastIdx] + [blockEdges[0]]
         blockEdges[1].reverseOffsets()
         blockEdges[3].reverseOffsets()
-        bottomEdgeIdx = mod((bottomEdgeIdx + 1), 4)
+        if bottomEdgeIdx == 3 { //swift lacks proper modulus, so I gotta do it myself.
+            bottomEdgeIdx = 0
+        }else{
+            bottomEdgeIdx = bottomEdgeIdx + 1
+        }
         print("CCWbottomEdgeIdx \(bottomEdgeIdx)")
         //print("begin printing edges after rotating them ccw")
         //printEdges()

@@ -33,7 +33,7 @@ class TetrisViewController: UIViewController {
         }
 
         let location = sender.location(in: tetrisBoardView)
-        print(location)
+        //print(location)
         if location.x < tetrisBoardView.bounds.width / CGFloat(2.0) {
             block.rotateCounterClockwise()
         } else {
@@ -71,7 +71,7 @@ class TetrisViewController: UIViewController {
     }
     
     func onBlockLand() {
-        print("View Controller Notified")
+        //print("View Controller Notified")
         newBlock(gridType: Int(arc4random_uniform(6)))
         block.startDescent()
     }
@@ -82,22 +82,30 @@ class TetrisViewController: UIViewController {
         switch num{
         case 0:
             grid = JTetrisGrid(board: tetrisBoard)
+            print("New JBlock Produced")
         case 1:
             grid = LTetrisGrid(board: tetrisBoard)
+            print("New LBlock Produced")
         case 2:
             grid = ZTetrisGrid(board: tetrisBoard)
+            print("New ZBlock Produced")
         case 3:
             grid = STetrisGrid(board: tetrisBoard)
+            print("New SBlock Produced")
         case 4:
             grid = ITetrisGrid(board: tetrisBoard)
+            print("New IBlock Produced")
         case 5:
             grid = OTetrisGrid(board: tetrisBoard)
+            print("New OBlock Produced")
         default:
             print("No grid type " + String(num))
             grid = JTetrisGrid(board: tetrisBoard)
+            print("New JBlock Produced by default")
         }
         let centerX = Int(UIScreen.main.bounds.size.width) / 2
         if holdBlock != nil {
+            print("dropping previous held block...")
             block = holdBlock
             block.moveToPosition(x: centerX, y: 100)
             

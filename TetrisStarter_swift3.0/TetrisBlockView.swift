@@ -169,7 +169,7 @@ class TetrisBlockView: UIView {
             blockModel.didRotateClockwise()
         }
         
-        printEdgeValues(edge: Edges.bottom)
+        //printEdgeValues(edge: Edges.bottom)
         animator.startAnimation()
     }
     
@@ -183,7 +183,7 @@ class TetrisBlockView: UIView {
             blockModel.didRotateCounterClockwise()
         }
         
-        printEdgeValues(edge: Edges.bottom)
+        //printEdgeValues(edge: Edges.bottom)
     }
     
     func addSubBlocksToView(grid: TetrisBlockModel, blockSize: Int) {

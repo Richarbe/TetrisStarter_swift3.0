@@ -31,29 +31,33 @@ class TetrisBoardModel: NSObject {
     }
     
     func genStartOccupiedMatrix() -> [[Bool]] {
-        var matrix:[[Bool]] = [[]]
+        var matrix:[[Bool]] = []
         for _ in 0..<numRows{
             var temp: [Bool] = [true]
-            temp = [Bool](repeating: false, count: numColumns)
+            temp += [Bool](repeating: false, count: numColumns)
             temp.append(true)
             matrix.append(temp)
         }
-        matrix.append([Bool](repeating: true, count: numRows))
+        matrix.append([Bool](repeating: true, count: numColumns + 2))
         return matrix
     }
     
     func collides(blockModel: TetrisBlockModel, centerX: CGFloat, centerY: CGFloat) -> Bool{
         //Move x and y value to corner of tetris block, and shift right to allow for left wall
-        let cornerX = Int(((centerX - (CGFloat(blockModel.blocksWide()) / 2.0)) / blockSize).rounded()) + 1
-        let cornerY = Int(((centerY - (CGFloat(blockModel.blocksHigh()) / 2.0)) / blockSize).rounded())
+        let cornerX = Int(((centerX - (CGFloat(blockModel.blocksWide()) * blockSize / 2.0)) / blockSize).rounded()) + 1
+        let cornerY = Int(((centerY - (CGFloat(blockModel.blocksHigh()) * blockSize / 2.0)) / blockSize).rounded())
+        //print("testing collision. corner is at: \(cornerX), \(cornerY)")
+        var blockVal: Bool
         for i in 0..<blockModel.blocksHigh(){
             for j in 0..<blockModel.blocksWide(){
-                if blockModel.valueAt(row: i, col: j) && occupied[cornerY+i][cornerX+j]{
-                    return false
+                blockVal = blockModel.valueAt(row: i, col: j)
+                //print("block's value at (row: \(i), col: \(j)) is \(blockVal)")
+                if blockVal && occupied[cornerY+i][cornerX+j]{
+                    return true
                 }
             }
         }
-        return true
+        return false
     }
     
     
