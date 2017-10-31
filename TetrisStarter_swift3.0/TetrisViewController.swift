@@ -48,7 +48,7 @@ class TetrisViewController: UIViewController {
             } else if sender.direction == .right {
                 block.moveRight()
             } else if sender.direction == .down {
-                //TODO send block down
+                block.fastDown()
             }
         }
     }
@@ -107,8 +107,7 @@ class TetrisViewController: UIViewController {
         if holdBlock != nil {
             print("dropping previous held block...")
             block = holdBlock
-            block.moveToPosition(x: centerX, y: 100)
-            
+            block.moveToTopCenter()
             block.startDescent()
         }
         holdBlock = TetrisBlockView(grid: grid, y: 50.0, x: CGFloat(centerX-150))

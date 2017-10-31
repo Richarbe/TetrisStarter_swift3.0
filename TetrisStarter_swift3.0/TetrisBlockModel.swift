@@ -29,7 +29,7 @@ class TetrisBlockModel: NSObject {
         board = tetrisBoardModel
         currentDirection = .forward
         super.init()
-        blockEdgeAttributes = GridEdgeAttributes(grid: smallestVisibleGrid()!)
+        blockEdgeAttributes = GridEdgeAttributes(grid: grid)
         for edge in edges {
             blockEdges.append( blockEdgeAttributes.edgeAttributes(edgeName: edge)! )
         }
@@ -164,11 +164,11 @@ class TetrisBlockModel: NSObject {
             return numColumns()
         }
     }
-    
+    /*
     func smallestVisibleGrid() -> [[Bool]]? {
         return smallestSpanningGrid()
     }
-    
+    */
 }
 
 private extension TetrisBlockModel {
@@ -189,7 +189,7 @@ private extension TetrisBlockModel {
         }
         return false
     }
-    
+    /*
     func smallestSpanningGrid() -> [[Bool]]? {
         // Finds the smallest two dimentional array that contains all
         // squares of the Tetris grid.
@@ -234,5 +234,6 @@ private extension TetrisBlockModel {
         }
         return visibleBlock
     }
+     */
 
 }

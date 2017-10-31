@@ -13,6 +13,7 @@ class TetrisBoardModel: NSObject {
     var numRows: Int!
     var numColumns: Int!
     var occupied: [[Bool]]
+    //var heightmap: [Int]
     var blockSize: CGFloat!
     
     init(frame: CGRect, numRows: Int, numColumns: Int){
@@ -42,22 +43,74 @@ class TetrisBoardModel: NSObject {
         return matrix
     }
     
-    func collides(blockModel: TetrisBlockModel, centerX: CGFloat, centerY: CGFloat) -> Bool{
+    func collides(blockModel: TetrisBlockModel, center: CGPoint) -> Bool{
         //Move x and y value to corner of tetris block, and shift right to allow for left wall
-        let cornerX = Int(((centerX - (CGFloat(blockModel.blocksWide()) * blockSize / 2.0)) / blockSize).rounded()) + 1
-        let cornerY = Int(((centerY - (CGFloat(blockModel.blocksHigh()) * blockSize / 2.0)) / blockSize).rounded())
+        let cornerX = Int(((center.x - (CGFloat(blockModel.blocksWide()) * blockSize / 2.0)) / blockSize).rounded())
+        let cornerY = Int(((center.y - (CGFloat(blockModel.blocksHigh()) * blockSize / 2.0)) / blockSize).rounded())
         //print("testing collision. corner is at: \(cornerX), \(cornerY)")
-        var blockVal: Bool
         for i in 0..<blockModel.blocksHigh(){
             for j in 0..<blockModel.blocksWide(){
-                blockVal = blockModel.valueAt(row: i, col: j)
                 //print("block's value at (row: \(i), col: \(j)) is \(blockVal)")
-                if blockVal && occupied[cornerY+i][cornerX+j]{
-                    return true
+                if blockModel.valueAt(row: i, col: j) && occupied[cornerY+i][cornerX+1+j]{
+                    return true //collision has happened
                 }
             }
         }
         return false
+    }
+    
+    func attachBlockToBoard(blockModel: TetrisBlockModel, center: CGPoint) {
+        let cornerX = Int(((center.x - (CGFloat(blockModel.blocksWide()) * blockSize / 2.0)) / blockSize).rounded())
+        let cornerY = Int(((center.y - (CGFloat(blockModel.blocksHigh()) * blockSize / 2.0)) / blockSize).rounded())
+        for i in 0..<blockModel.blocksHigh(){
+            for j in 0..<blockModel.blocksWide(){
+                if blockModel.valueAt(row: i, col: j){
+                    occupied[cornerY+i][cornerX+1+j] = true
+                }
+            }
+        }
+        /*
+        for i in (cornerX)..<(cornerX + blockModel.blocksWide()){
+            recalculateHeight(column: i)
+        }*/
+    }
+    
+    /*
+    func recalculateHeight(column: Int){
+        for i in 0..<numRows{
+            if occupied[i][column+1]{
+                heightmap[column] = numRows - i
+                return
+            }
+        }
+    }
+    */
+    private func getStopRow(startRow: Int, startColumn: Int) -> Int{
+        for i in startRow..<numRows+1{
+            if occupied[i][startColumn]{
+                return i-1
+            }
+        }
+        print("A block has fallen out of this world")
+        return numRows
+    }
+    
+    func getFallDistance(blockModel:TetrisBlockModel, center:CGPoint) -> CGFloat{
+        var minStopRow: Int = numRows
+        var stopRow: Int
+        let cornerX = Int(((center.x - (CGFloat(blockModel.blocksWide()) * blockSize / 2.0)) / blockSize).rounded())
+        let cornerY = Int(((center.y - (CGFloat(blockModel.blocksHigh()) * blockSize / 2.0)) / blockSize).rounded())
+        for i in 0..<blockModel.blocksWide(){
+            stopRow = getStopRow(startRow: cornerY + blockModel.blocksHigh() - blockModel.edgeAttributes(edge: .bottom).offsets[i],
+                                 startColumn: cornerX + i + 1)
+            if stopRow < minStopRow{
+                minStopRow = stopRow
+            }
+        }
+        let StopBottom = CGFloat(minStopRow+1) * blockSize
+        let CurrentBottom = (center.y + CGFloat(blockModel.blocksHigh()) * blockSize / 2)
+        let fallDistance = StopBottom - CurrentBottom
+        return fallDistance
     }
     
     

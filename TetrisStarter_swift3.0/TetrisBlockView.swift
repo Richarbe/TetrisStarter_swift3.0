@@ -18,6 +18,7 @@ class TetrisBlockView: UIView {
     var blockBounds: CGSize
     var boardModel: TetrisBoardModel
     var prevPosition: CGPoint
+    let distancePerSec: CGFloat = 80
     
     init(grid: TetrisBlockModel, y: CGFloat, x: CGFloat) {
         blockColor = grid.getColor()
@@ -27,31 +28,16 @@ class TetrisBlockView: UIView {
         let width = CGFloat(blockSize * grid.blocksWide())
         let height = CGFloat(blockSize * grid.blocksHigh())
         blockBounds = CGSize(width: width, height: height)
-        let toTravel = CGFloat(blockSize * 12)
         let frame = CGRect(x: x, y: y, width: width, height: height)
         prevPosition = CGPoint(x: 0, y: 0)
         super.init(frame: frame)
-        prevPosition = self.center
         backgroundColor = UIColor.clear
         snapToGrid(SnapToX: true, SnapToY: true)
         addSubBlocksToView(grid: grid, blockSize: blockSize)
-        animator = UIViewPropertyAnimator(duration: 5.0, curve: .linear) { [unowned self] in
-            self.center.y += toTravel
-        }
-        animator.addCompletion { position in
-            switch position {
-            case .end:
-                //print("completion handler called at the end of the animation")
-                NotificationCenter.default.post(name: Constants.BLOCK_LAND_NOTIFY, object: nil)
-            case .current:
-                print("completion handler called mid animation")
-            case .start:
-                print("completion handler called at the start of the animation")
-            }
-        }
     }
 
     func startDescent() {
+        self.startNewFallAnimation(DistancePerSec: distancePerSec)
         animator.startAnimation()
         //blockModel.printEdges()
     }
@@ -62,6 +48,14 @@ class TetrisBlockView: UIView {
         snapToGrid(SnapToX: true, SnapToY: true)
     }
     
+    func moveToTopCenter(){
+        print("moving to center. previous location was \(self.center.x), \(self.center.y)")
+        self.center.x = self.boardModel.frame.midX
+        self.center.y = self.boardModel.frame.minY + CGFloat(self.blockModel.blocksHigh() * self.blockSize) / 2
+        print("new center is \(self.center.x), \(self.center.y)")
+        snapToGrid(SnapToX: true, SnapToY: true)
+    }
+        
     func snapToGrid(SnapToX: Bool, SnapToY: Bool){
         var x = (((self.center.x)/CGFloat(blockSize)).rounded() * CGFloat(blockSize))
         var y = (((self.center.y)/CGFloat(blockSize)).rounded() * CGFloat(blockSize))
@@ -87,8 +81,27 @@ class TetrisBlockView: UIView {
         }
     }
     
-    func startNewFallAnimation(){
-        
+    func startNewFallAnimation(DistancePerSec: CGFloat){
+        if animator != nil{
+            animator.stopAnimation(true)}
+        prevPosition = self.center
+        let fallDistance = self.boardModel.getFallDistance(blockModel: self.blockModel, center: self.center)
+        animator = UIViewPropertyAnimator(duration: Double(fallDistance/DistancePerSec), curve: .linear) { [unowned self] in
+            self.center.y += self.boardModel.getFallDistance(blockModel: self.blockModel, center: self.center)
+        }
+        animator.addCompletion { position in
+            switch position {
+            case .end:
+                //print("completion handler called at the end of the animation")
+                usleep(useconds_t(1000000.0 * CGFloat(self.blockSize) / 2.0 / self.distancePerSec))
+                self.boardModel.attachBlockToBoard(blockModel: self.blockModel, center: self.center)
+                NotificationCenter.default.post(name: Constants.BLOCK_LAND_NOTIFY, object: nil)
+            case .current:
+                print("completion handler called mid animation")
+            case .start:
+                print("completion handler called at the start of the animation")
+            }
+        }
     }
     
     func moveSideWays(offset: Int) {
@@ -96,14 +109,15 @@ class TetrisBlockView: UIView {
             animator.pauseAnimation()
             let currentY = self.prevPosition.y + animator.fractionComplete * (self.center.y - self.prevPosition.y)
             let x = self.center.x + CGFloat(offset)
-            if boardModel.collides(blockModel: self.blockModel, centerX: x, centerY: currentY){
+            if boardModel.collides(blockModel: self.blockModel, center: CGPoint(x: x, y: currentY)){
                 self.animator.startAnimation()
                 return
             }
             UIView.animate(withDuration: 0.3, animations: { [unowned self, x] in
                 self.center.x = x
                 }, completion: { [unowned self] (_) in
-                    self.animator.startAnimation()
+                    self.startDescent()
+                    //self.animator.startAnimation()
             })
         }
     }
@@ -139,7 +153,7 @@ class TetrisBlockView: UIView {
             x -= CGFloat(self.blockSize) / CGFloat(2.0)
         }
         let currentY = self.prevPosition.y + animator.fractionComplete * (self.center.y - self.prevPosition.y)
-        if boardModel.collides(blockModel: self.blockModel, centerX: x, centerY: currentY){
+        if boardModel.collides(blockModel: self.blockModel, center: CGPoint(x: x, y: currentY)){
             self.animator.startAnimation()
             return false
         }
@@ -150,7 +164,8 @@ class TetrisBlockView: UIView {
             self.center.x = x//CGPoint(x: self.center.x - CGFloat(diffX), y: self.center.y)
         }
         rotation.addCompletion({ [unowned self] (_) in
-            self.animator.startAnimation()
+            //self.animator.startAnimation()
+            self.startDescent()
         });
         
         // Once the rotation is complete, we will have to make sure that the block is aligned on the edge
@@ -184,6 +199,11 @@ class TetrisBlockView: UIView {
         }
         
         //printEdgeValues(edge: Edges.bottom)
+    }
+    
+    func fastDown(){
+        self.startNewFallAnimation(DistancePerSec: distancePerSec * 4)
+        animator.startAnimation()
     }
     
     func addSubBlocksToView(grid: TetrisBlockModel, blockSize: Int) {
