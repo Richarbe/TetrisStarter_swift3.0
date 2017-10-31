@@ -73,6 +73,7 @@ class TetrisBoardModel: NSObject {
         for i in (cornerX)..<(cornerX + blockModel.blocksWide()){
             recalculateHeight(column: i)
         }*/
+        print("block attached")
     }
     
     /*

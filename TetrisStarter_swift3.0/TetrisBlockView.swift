@@ -87,13 +87,15 @@ class TetrisBlockView: UIView {
         prevPosition = self.center
         let fallDistance = self.boardModel.getFallDistance(blockModel: self.blockModel, center: self.center)
         animator = UIViewPropertyAnimator(duration: Double(fallDistance/DistancePerSec), curve: .linear) { [unowned self] in
-            self.center.y += self.boardModel.getFallDistance(blockModel: self.blockModel, center: self.center)
+            self.center.y += fallDistance
         }
         animator.addCompletion { position in
             switch position {
             case .end:
                 //print("completion handler called at the end of the animation")
+                print("pre completion wait")
                 usleep(useconds_t(1000000.0 * CGFloat(self.blockSize) / 2.0 / self.distancePerSec))
+                print("wait done")
                 self.boardModel.attachBlockToBoard(blockModel: self.blockModel, center: self.center)
                 NotificationCenter.default.post(name: Constants.BLOCK_LAND_NOTIFY, object: nil)
             case .current:
@@ -199,10 +201,12 @@ class TetrisBlockView: UIView {
         }
         
         //printEdgeValues(edge: Edges.bottom)
+        animator.startAnimation()
     }
     
     func fastDown(){
         self.startNewFallAnimation(DistancePerSec: distancePerSec * 4)
+        print("sending down at 4x speed")
         animator.startAnimation()
     }
     

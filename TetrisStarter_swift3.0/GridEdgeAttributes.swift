@@ -129,7 +129,7 @@ private extension GridEdgeAttributes {
     
     func calcuateRightEdgeIndentationValues(grid: GridWrapper) -> [Int] {
         var edgeValues = [Int]()
-        print("in right edgeIndentation numRows is\(grid.numRows())")
+        // print("in right edgeIndentation numRows is \(grid.numRows())")
         for row in 0 ..< grid.numRows() {
             var firstVisibleBlockIdx = grid.numColumns() - 1 // first from the bottom
             while firstVisibleBlockIdx >= 0 && !grid.hasBlockAt(row: row, column: firstVisibleBlockIdx) {
